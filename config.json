@@ -1,0 +1,21 @@
+{
+  "rooms": [
+    {
+      "roomId": "201",
+      "identity": "ID201"
+    },
+    {
+      "roomId": "202",
+      "identity": "ID202"
+    },
+    {
+      "roomId": "203",
+      "identity": "ID203"
+    },
+    {
+      "roomId": "204",
+      "identity": "ID204"
+    }
+  ],
+  "jwt_secret_key": "central-ac-jwt-key"
+}
