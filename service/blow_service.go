@@ -4,7 +4,7 @@ import (
 	"center-air-conditioning-interactive/constants"
 	"center-air-conditioning-interactive/model"
 	"errors"
-	"log"
+	"fmt"
 	"time"
 )
 
@@ -28,11 +28,11 @@ func StartBlowing(roomId string, targetTemp float64, fanSpeed string) error {
 		RequestStatus: constants.RequestStatusPending,
 	})
 
-
 	room.RoomAC.TargetTemp = targetTemp
 	room.RoomAC.FanSpeed = constants.FanSpeedToInt[fanSpeed]
 
-	log.Printf("[Room%v]: Blowing started | Target Temperature: %v°C | Fanspeed:%v", roomId, targetTemp, fanSpeed)
+	message := fmt.Sprintf("Blowing started | Target Temperature: %v°C | Fanspeed:%v", targetTemp, fanSpeed)
+	model.GetPrinterInstance().Print("blow", roomId, message)
 
 	go updateEnergyAndCost(request)
 	return nil
@@ -42,5 +42,5 @@ func StopBlowing(roomId string) {
 	requestQueue := model.GetRequestQueue()
 	requestQueue.UpdateRequestStatusByRoomId(roomId)
 
-	log.Printf("[Room%v]: Blowing stopped", roomId)
+	model.GetPrinterInstance().Print("blow", roomId, "Blowing stopped")
 }

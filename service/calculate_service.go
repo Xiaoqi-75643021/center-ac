@@ -3,7 +3,8 @@ package service
 import (
 	"center-air-conditioning-interactive/constants"
 	"center-air-conditioning-interactive/model"
-	"log"
+	"fmt"
+
 	"time"
 )
 
@@ -23,7 +24,8 @@ func updateEnergyAndCost(request *model.BlowRequest) {
 		request.EnergyUsed[2] += constants.HighSpeedConsumedPerSecond
 		request.Cost = constants.CostPerEnergy * (request.EnergyUsed[0] + request.EnergyUsed[1] + request.EnergyUsed[2])
 
-		log.Printf("[Room%v]: Energy Used: %v | Cost: %v", request.RoomId, request.EnergyUsed, request.Cost)
+		message := fmt.Sprintf("Energy Used: %v | Cost: %v", request.EnergyUsed, request.Cost)
+		model.GetPrinterInstance().Print("pollReport", request.RoomId, message)
 	}
 }
 

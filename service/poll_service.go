@@ -4,7 +4,7 @@ import (
 	"center-air-conditioning-interactive/constants"
 	"center-air-conditioning-interactive/model"
 	"errors"
-	"log"
+	"fmt"
 )
 
 func QueryEnergyAndCostByRoomId(roomId string) (float64, float64, error) {
@@ -32,7 +32,8 @@ func UpdateRoomByRoomId(roomId string, temperature float64, status int) error {
 	room.CurrentTemp = temperature
 	room.RoomAC.Status = status
 
-	log.Printf("[Room%v]: Temperature:%v°C\n", roomId, temperature)
+	message := fmt.Sprintf("Temperature:%v°C | Status:%v", temperature, status)
+	model.GetPrinterInstance().Print("pollReport", roomId, message)
 
 	return nil
 }

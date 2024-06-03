@@ -4,7 +4,6 @@ import (
 	"center-air-conditioning-interactive/model"
 	"center-air-conditioning-interactive/pkg/jwt"
 	"errors"
-	"log"
 )
 
 func Login(roomId, identity string) (string, error) {
@@ -18,7 +17,6 @@ func Login(roomId, identity string) (string, error) {
 		return "", err
 	}
 
-	
-	log.Printf("[Room%v]: Login in successfully\n", roomId)
+	model.GetPrinterInstance().Print("auth", roomId, "Login in successfully")
 	return token, nil
 }

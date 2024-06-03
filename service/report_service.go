@@ -30,7 +30,5 @@ func QueryRoomLogByRoomId(roomId string, period string) (int, []*model.BlowReque
 		return 0, nil, 0, errors.New("无效的时间段")
 	}
 
-
-
 	return switchTime, requests, totalCost, nil
 }
