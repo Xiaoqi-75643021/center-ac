@@ -39,7 +39,7 @@ func CalculateEnergyAndCost(request *model.BlowRequest) {
 		}
 		energySliceString := fmt.Sprintf("[%s]", strings.Join(energys, " "))
 		message := fmt.Sprintf("Energy Used: %v | Cost: %.1f", energySliceString, request.Cost)
-		model.GetPrinterInstance().Print("pollReport", request.RoomId, message)
+		model.GetPrinterInstance().Print("costReport", request.RoomId, message)
 	}
 }
 

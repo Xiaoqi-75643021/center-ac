@@ -11,7 +11,7 @@ import (
 type Printer struct {
 	blowColor         *color.Color
 	authColor         *color.Color
-	pollReportColor   *color.Color
+	costReportColor   *color.Color
 	logReportColor    *color.Color
 	statusReportColor *color.Color
 }
@@ -24,7 +24,7 @@ func GetPrinterInstance() *Printer {
 		PrinterInstance = &Printer{
 			blowColor:         color.New(color.FgGreen).Add(color.Bold),
 			authColor:         color.New(color.FgBlue).Add(color.Bold),
-			pollReportColor:   color.New(color.FgYellow).Add(color.Bold),
+			costReportColor:   color.New(color.FgYellow).Add(color.Bold),
 			logReportColor:    color.New(color.FgRed).Add(color.Bold),
 			statusReportColor: color.New(color.FgCyan).Add(color.Bold),
 		}
@@ -37,16 +37,16 @@ func (p *Printer) Print(category, roomId, message string) {
 	var colorPrinter *color.Color
 
 	switch category {
-	case "blow":
-		colorPrinter = p.blowColor
 	case "auth":
 		colorPrinter = p.authColor
-	case "pollReport":
-		colorPrinter = p.pollReportColor
-	case "logReport":
-		colorPrinter = p.logReportColor
 	case "statusReport":
 		colorPrinter = p.statusReportColor
+	case "blow":
+		colorPrinter = p.blowColor
+	case "costReport":
+		colorPrinter = p.costReportColor
+	case "logReport":
+		colorPrinter = p.logReportColor
 	default:
 		colorPrinter = color.New(color.FgWhite)
 	}
