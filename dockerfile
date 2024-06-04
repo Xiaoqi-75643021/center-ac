@@ -16,11 +16,17 @@ RUN go mod download
 # 将项目的所有文件复制到工作目录
 COPY . .
 
-# 构建Go应用程序
-RUN go build -o main .
+# 构建静态链接的Go应用程序
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
-# 暴露应用程序端口
-EXPOSE 8080
+# 使用scratch作为运行环境
+FROM scratch
+
+# 设置工作目录
+WORKDIR /root/
+
+# 从构建阶段复制构建的二进制文件
+COPY --from=builder /app/main .
 
 # 运行Go应用程序
 CMD ["./main"]
