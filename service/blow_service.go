@@ -26,15 +26,18 @@ func StartBlowing(roomId string, targetTemp float64, fanSpeed string) error {
 		RoomId: roomId,
 		StartTime: time.Now(),
 		RequestStatus: constants.RequestStatusPending,
+		EnergyUsed: make([]float64, 3),
 	})
+
+	request = requestQueue.QueryRequestByRoomId(roomId)
 
 	room.RoomAC.TargetTemp = targetTemp
 	room.RoomAC.FanSpeed = constants.FanSpeedToInt[fanSpeed]
 
-	message := fmt.Sprintf("Blowing started | Target Temperature: %v°C | Fanspeed:%v", targetTemp, fanSpeed)
+	message := fmt.Sprintf("Blowing started | Target Temperature: %.1f°C | Fanspeed:%v", targetTemp, fanSpeed)
 	model.GetPrinterInstance().Print("blow", roomId, message)
 
-	go updateEnergyAndCost(request)
+	go CalculateEnergyAndCost(request)
 	return nil
 }
 
