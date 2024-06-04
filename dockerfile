@@ -16,17 +16,17 @@ RUN go mod download
 # 将项目的所有文件复制到工作目录
 COPY . .
 
-# 构建静态链接的Go应用程序
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+# 构建应用程序
+RUN CGO_ENABLED=0 GOOS=linux go build -o center-ac
 
-# 使用scratch作为运行环境
+# 使用scratch作为最终镜像
 FROM scratch
 
-# 设置工作目录
-WORKDIR /root/
+# 从builder镜像中复制构建的可执行文件到scratch镜像中
+COPY --from=builder /app/center-ac .
 
-# 从构建阶段复制构建的二进制文件
-COPY --from=builder /app/main .
+# 复制config.json文件到scratch镜像中
+COPY --from=builder /app/config.json .
 
-# 运行Go应用程序
-CMD ["./main"]
+# 运行应用程序
+CMD ["./center-ac"]
