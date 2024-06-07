@@ -38,10 +38,10 @@ func UpdateRoomStatus(c *gin.Context) {
 	}
 
 	var statusNum int
-	if req.Status == "on" {
-		statusNum = constants.RoomStatusOn
-	} else if req.Status == "off" {
-		statusNum = constants.RoomStatusOff
+	if req.Status == "Warm" {
+		statusNum = constants.RoomStatusWarm
+	} else if req.Status == "Cool" {
+		statusNum = constants.RoomStatusCool
 	} else {
 		Respond(c, http.StatusBadRequest, 1, "请求参数错误", nil)
 		return
@@ -52,8 +52,10 @@ func UpdateRoomStatus(c *gin.Context) {
 		return
 	}
 
+	mode, _ := service.QueryCentralACMode()
+
 	message := fmt.Sprintf("房间%v信息同步成功", roomId)
-	Respond(c, http.StatusOK, 0, message, nil)
+	Respond(c, http.StatusOK, 0, message, gin.H{"mode": mode})
 }
 
 func QueryBlowRequestStatus(c *gin.Context) {

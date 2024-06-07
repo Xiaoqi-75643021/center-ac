@@ -1,48 +1,39 @@
 package handler
 
-// import (
-// 	"center-air-conditioning-interactive/constants"
-// 	"center-air-conditioning-interactive/model"
-// 	"center-air-conditioning-interactive/service"
-// 	"net/http"
+import (
+	"center-air-conditioning-interactive/constants"
+	"center-air-conditioning-interactive/model"
+	"net/http"
 
-// 	"github.com/gin-gonic/gin"
-// )
+	"github.com/gin-gonic/gin"
+)
 
-// func GetStatus(c *gin.Context) {
-// 	ac := model.GetCentralACInstance()
-// 	Respond(c, http.StatusOK, 0, "获取状态成功", gin.H{
-// 		"mode":        constants.CentralACModeToString[ac.Mode],
-// 		"temperature": ac.CurrentTemp,
-// 		"status":      constants.CentralACStatusToString[ac.Status],
-// 	})
-// }
+func SetMode(c *gin.Context) {
+	type request struct {
+		Mode string `json:"mode" binding:"required"`
+	}
+	var req request
+	if err := c.ShouldBindJSON(&req); err != nil {
+		Respond(c, http.StatusBadRequest, 1, err.Error(), nil)
+		return
+	}
 
-// func SetMode(c *gin.Context) {
-// 	var request struct {
-// 		Mode string `json:"mode" binding:"required"`
-// 	}
-// 	if err := c.ShouldBindJSON(&request); err != nil {
-// 		Respond(c, http.StatusBadRequest, 1, err.Error(), nil)
-// 		return
-// 	}
+	ac := model.GetCentralACInstance()
 
-// 	ac := model.GetCentralACInstance()
-// 	ac.Mu.Lock()
-// 	defer ac.Mu.Unlock()
+	switch req.Mode {
+	case "Cool":
+		ac.Mode = constants.CoolMode
+		ac.DefaultTemp = constants.DefaultCoolingTemp
+	case "Warm":
+		ac.Mode = constants.HeatMode
+		ac.DefaultTemp = constants.DefaultHeatingTemp
+	default:
+		Respond(c, http.StatusBadRequest, 1, "无效的模式", nil)
+		return
+	}
 
-// 	if request.Mode == "cooling" || request.Mode == "heating" {
-// 		ac.Mode = request.Mode
-// 		if ac.Mode == "cooling" {
-// 			ac.CurrentTemp = ac.DefaultCoolingTemp
-// 		} else {
-// 			ac.CurrentTemp = ac.DefaultHeatingTemp
-// 		}
-// 		Respond(c, http.StatusOK, 0, "模式设置成功", nil)
-// 	} else {
-// 		Respond(c, http.StatusBadRequest, 1, "无效的模式", nil)
-// 	}
-// }
+	Respond(c, http.StatusOK, 0, "中央空调模式设置成功", nil)
+}
 
 // func SetTemperature(c *gin.Context) {
 // 	var json struct {

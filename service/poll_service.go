@@ -23,6 +23,12 @@ func QueryEnergyAndCostByRoomId(roomId string) (float64, float64, error) {
 	return energy, amount, nil
 }
 
+func QueryCentralACMode() (string, error) {
+	ac := model.GetCentralACInstance()
+	mode := constants.CentralACModeToString[ac.Mode]
+	return mode, nil
+}
+
 func UpdateRoomByRoomId(roomId string, temperature float64, status int) error {
 	rm := model.GetRoomManagerInstance()
 	room, exists := rm.Rooms[roomId];
@@ -32,7 +38,7 @@ func UpdateRoomByRoomId(roomId string, temperature float64, status int) error {
 	room.CurrentTemp = temperature
 	room.RoomAC.Status = status
 
-	message := fmt.Sprintf("Temperature:%v°C | Status:%v", temperature, status)
+	message := fmt.Sprintf("Temperature:%v°C | Status:%v", temperature, constants.RoomStatusToString[status])
 	model.GetPrinterInstance().Print("statusReport", roomId, message)
 
 	return nil

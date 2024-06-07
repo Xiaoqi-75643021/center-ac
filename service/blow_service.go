@@ -17,11 +17,6 @@ func StartBlowing(roomId string, targetTemp float64, fanSpeed string) error {
 		return errors.New("房间不存在")
 	}
 
-	request := requestQueue.QueryRequestByRoomId(roomId)
-	if request != nil {
-		requestQueue.RemoveRequestByRoomId(roomId)
-	}
-
 	requestQueue.AddRequest(&model.BlowRequest{
 		RoomId: roomId,
 		StartTime: time.Now(),
@@ -29,7 +24,7 @@ func StartBlowing(roomId string, targetTemp float64, fanSpeed string) error {
 		EnergyUsed: make([]float64, 3),
 	})
 
-	request = requestQueue.QueryRequestByRoomId(roomId)
+	request := requestQueue.QueryRequestByRoomId(roomId)
 
 	room.RoomAC.TargetTemp = targetTemp
 	room.RoomAC.FanSpeed = constants.FanSpeedToInt[fanSpeed]

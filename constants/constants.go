@@ -18,8 +18,8 @@ const (
 	DefaultRefreshRate = 1
 
 	// Room Status
-	RoomStatusOn  = 1
-	RoomStatusOff = 0
+	RoomStatusWarm = 1
+	RoomStatusCool = 0
 
 	// FanSpeed
 	FanSpeedLow    = 1
@@ -40,8 +40,8 @@ const (
 )
 
 var RoomStatusToString = map[int]string{
-	RoomStatusOn:  "on",
-	RoomStatusOff: "off",
+	RoomStatusWarm: "Warm",
+	RoomStatusCool: "Cool",
 }
 
 var FanSpeedToString = map[int]string{
@@ -64,7 +64,7 @@ var RequestStatusToString = map[int]string{
 
 var CentralACModeToString = map[int]string{
 	CoolMode: "Cool",
-	HeatMode: "Heat",
+	HeatMode: "Warm",
 }
 
 var CentralACStatusToString = map[int]string{
