@@ -29,6 +29,12 @@ func QueryCentralACMode() (string, error) {
 	return mode, nil
 }
 
+func QueryRefreshRate() (int, error) {
+	ac := model.GetCentralACInstance()
+	refreshRate := ac.RefreshRate
+	return refreshRate, nil
+}
+
 func UpdateRoomByRoomId(roomId string, temperature float64, status int) error {
 	rm := model.GetRoomManagerInstance()
 	room, exists := rm.Rooms[roomId];

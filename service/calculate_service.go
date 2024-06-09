@@ -43,6 +43,27 @@ func CalculateEnergyAndCost(request *model.BlowRequest) {
 	}
 }
 
+func CalculateDailyEnergyAndCostByRoomId(roomId string) (float64, float64) {
+	var energy, cost float64
+	now := time.Now()
+	rm := model.GetRoomManagerInstance()
+	roomRequests := rm.Rooms[roomId].RoomAC.BlowRequests
+	for _, request := range roomRequests {
+		if request.StartTime.After(now) {
+			energy += request.EnergyUsed[0] + request.EnergyUsed[1] + request.EnergyUsed[2]
+		}
+	}
+
+	rq := model.GetRequestQueue()
+	request := rq.QueryRequestByRoomId(roomId)
+	if request != nil {
+		energy += request.EnergyUsed[0] + request.EnergyUsed[1] + request.EnergyUsed[2]
+	}
+	cost = energy * constants.CostPerEnergy
+
+	return energy, cost
+}
+
 func UpdateRoomRequestLog(request *model.BlowRequest) {
 	rm := model.GetRoomManagerInstance()
 	rq := model.GetRequestQueue()

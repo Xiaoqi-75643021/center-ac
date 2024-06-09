@@ -53,9 +53,18 @@ func UpdateRoomStatus(c *gin.Context) {
 	}
 
 	mode, _ := service.QueryCentralACMode()
+	refreshRate, _ := service.QueryRefreshRate()
+	energy, cost := service.CalculateDailyEnergyAndCostByRoomId(roomId.(string))
 
 	message := fmt.Sprintf("房间%v信息同步成功", roomId)
-	Respond(c, http.StatusOK, 0, message, gin.H{"mode": mode})
+	Respond(c, http.StatusOK, 0, message, gin.H{
+		"mode":        mode,
+		"refreshRate": refreshRate,
+		"daily_statistics": gin.H{
+			"energy": energy,
+			"cost":   cost,
+		},
+	})
 }
 
 func QueryBlowRequestStatus(c *gin.Context) {
