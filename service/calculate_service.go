@@ -45,11 +45,15 @@ func CalculateEnergyAndCost(request *model.BlowRequest) {
 
 func CalculateDailyEnergyAndCostByRoomId(roomId string) (float64, float64) {
 	var energy, cost float64
+
 	now := time.Now()
+	morning := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+
 	rm := model.GetRoomManagerInstance()
 	roomRequests := rm.Rooms[roomId].RoomAC.BlowRequests
+
 	for _, request := range roomRequests {
-		if request.StartTime.After(now) {
+		if request.StartTime.After(morning) {
 			energy += request.EnergyUsed[0] + request.EnergyUsed[1] + request.EnergyUsed[2]
 		}
 	}
