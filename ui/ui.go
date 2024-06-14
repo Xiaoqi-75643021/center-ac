@@ -118,26 +118,38 @@ func buildMainScreen(w fyne.Window) fyne.CanvasObject {
 
 	refreshRateBox := container.NewHBox(widget.NewLabel("Set Refresh Rate: "), container.New(layout.NewGridWrapLayout(fyne.NewSize(200, refreshRateEntry.MinSize().Height)), refreshRateEntry), setRefreshRateButton)
 
+	// Room ID和Period输入框
+	roomIdEntry := widget.NewEntry()
+	roomIdEntry.SetPlaceHolder("Enter Room ID")
+	periodEntry := widget.NewEntry()
+	periodEntry.SetPlaceHolder("Enter Period (daily/weekly/monthly)")
+
 	// 导出报表按钮
 	exportReportButton := widget.NewButton("Export Report", func() {
-		entry := widget.NewEntry()
-		entry.SetPlaceHolder("Enter Room ID")
-		entryPeriod := widget.NewEntry()
-		entryPeriod.SetPlaceHolder("Enter Period (daily/weekly/monthly)")
-		
-		content := container.NewVBox(entry, entryPeriod)
-		dialog.ShowCustomConfirm("Export Report", "Export", "Cancel", content, func(confirmed bool) {
-			if confirmed {
-				roomId := entry.Text
-				period := entryPeriod.Text
-				if err := ExportRoomReportWithDialog(roomId, period, w); err != nil {
-					dialog.ShowError(err, w)
-				} else {
-					dialog.ShowInformation("Success", "Report exported successfully!", w)
-				}
-			}
-		}, w)
+		roomId := roomIdEntry.Text
+		period := periodEntry.Text
+		if roomId == "" || period == "" {
+			dialog.ShowError(errors.New("Room ID and Period must be filled"), w)
+			return
+		}
+		if period == "daily" || period == "weekly" || period == "monthly" {
+			dialog.ShowError(errors.New("Invalid period"), w)
+			return
+		}
+		if err := ExportRoomReportWithDialog(roomId, period, w); err != nil {
+			dialog.ShowError(err, w)
+		} else {
+			dialog.ShowInformation("Success", "Report exported successfully!", w)
+		}
 	})
+
+	// Room ID和Period输入框放在按钮下面
+	exportReportBox := container.NewVBox(
+		widget.NewLabel("Enter Room ID and Period:"),
+		roomIdEntry,
+		periodEntry,
+		exportReportButton,
+	)
 
 	// 静态数据部分
 	staticData := container.NewVBox(
@@ -155,7 +167,7 @@ func buildMainScreen(w fyne.Window) fyne.CanvasObject {
 		toggleButton,
 		modeButton,
 		refreshRateBox,
-		exportReportButton,
+		exportReportBox,
 	)
 
 	return container.NewBorder(nil, nil, nil, nil,
@@ -164,6 +176,7 @@ func buildMainScreen(w fyne.Window) fyne.CanvasObject {
 			controlPanel,
 		))
 }
+
 
 func updateModeString() {
 	modeString := ac.GetModeString()

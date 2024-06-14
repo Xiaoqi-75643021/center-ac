@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -73,13 +75,24 @@ func ExportRoomReport(roomId string, period string, savePath string) error {
 
 func createLogMessage(roomId string, switchTime int, requests []*model.BlowRequest, totalCost float64, period string) string {
 	// 创建详细的日志信息
-	requestsInfo := ""
-	for _, request := range requests {
-		requestsInfo += request.String() + "; "
-	}
-	return time.Now().Format("2006-01-02 15:04:05") + " - RoomID: " + roomId + ", SwitchTime: " + string(rune(switchTime)) + ", Requests: [" + requestsInfo + "], TotalCost: " + fmt.Sprintf("%.2f", totalCost) + ", Period: " + period
-}
+	var builder strings.Builder
+	builder.WriteString(time.Now().Format("2006-01-02 15:04:05"))
+	builder.WriteString(" - RoomID: " + roomId + "\n")
+	builder.WriteString("SwitchTime: " + strconv.Itoa(switchTime) + "\n")
+	builder.WriteString("Requests: [")
 
+	for i, request := range requests {
+		if i > 0 {
+			builder.WriteString(", ")
+		}
+		builder.WriteString(request.String())
+	}
+	builder.WriteString("]\n")
+	builder.WriteString(fmt.Sprintf("TotalCost: %.2f\n", totalCost))
+	builder.WriteString("Period: " + period + "\n")
+
+	return builder.String()
+}
 func saveLogMessage(filePath string, message string) error {
 	f, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
