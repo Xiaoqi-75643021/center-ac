@@ -64,7 +64,7 @@ func buildMainScreen(w fyne.Window) fyne.CanvasObject {
 	refreshRateLabel := widget.NewLabelWithData(refreshRate)
 
 	// 开关按钮
-	toggleButton := widget.NewButton("Toggle On/Off", func() {
+	toggleButton := widget.NewButton("Toggle Status(On/Off)", func() {
 		if ac.IsTurnOff() {
 			ac.SetStatus(constants.CentralStatusStandBy)
 		} else {
@@ -76,7 +76,7 @@ func buildMainScreen(w fyne.Window) fyne.CanvasObject {
 	})
 
 	// 工作模式按钮
-	modeButton := widget.NewButton("Toggle Mode (Cool/Heat)", func() {
+	modeButton := widget.NewButton("Toggle Mode(Cool/Heat)", func() {
 		if ac.Mode == constants.CoolMode {
 			ac.SetMode(constants.HeatMode)
 		} else {

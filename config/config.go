@@ -2,7 +2,6 @@ package config
 
 import (
 	"center-air-conditioning-interactive/model"
-
 	"encoding/json"
 	"io"
 	"log"
@@ -20,8 +19,17 @@ type Config struct {
 }
 
 var (
-	cfg  Config
+	cfg Config
 )
+
+// 新增日志初始化函数
+func InitializeLogger() {
+	logFile, err := os.OpenFile("RoomReportLog.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		log.Fatalf("无法打开日志文件: %v", err)
+	}
+	log.SetOutput(logFile)
+}
 
 func LoadConfig(filename string) {
 	file, err := os.Open(filename)
@@ -57,7 +65,7 @@ func initializeRoomManagerInstance(cfg *Config) {
 			Identity: room.Identity,
 			RoomAC: &model.RoomAC{
 				CostTracker: model.NewCostTracker(),
-				BlowRequests: make([]*model.BlowRequest, 0),	
+				BlowRequests: make([]*model.BlowRequest, 0),
 			},
 		}
 		roomManager.AddRoom(room)

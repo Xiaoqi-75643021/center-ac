@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"sync"
 	"time"
 )
@@ -62,4 +63,18 @@ func (rm *RoomManager) RemoveRoom(roomId string) {
 	rm.mu.Lock()
 	defer rm.mu.Unlock()
 	delete(rm.Rooms, roomId)
+}
+
+func (br *BlowRequest) String() string {
+	return fmt.Sprintf(
+		"RoomId: %s, StartTime: %s, EndTime: %s, StartTemp: %.2f, EndTemp: %.2f, EnergyUsed: %v, Cost: %.2f, RequestStatus: %d",
+		br.RoomId,
+		br.StartTime.Format("2006-01-02 15:04:05"),
+		br.EndTime.Format("2006-01-02 15:04:05"),
+		br.StartTemp,
+		br.EndTemp,
+		br.EnergyUsed,
+		br.Cost,
+		br.RequestStatus,
+	)
 }

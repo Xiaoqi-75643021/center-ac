@@ -18,7 +18,11 @@ func main() {
 	timer.Start()
 	defer timer.Stop()
 
-	go ui.RunUI()
+	go func() {
+        if err := r.Run(":8080"); err != nil {
+            panic(err)
+        }
+    }()
 
-    r.Run(":8080")
+    ui.RunUI()
 }
