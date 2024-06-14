@@ -5,6 +5,7 @@ import (
 	"center-air-conditioning-interactive/constants"
 	"center-air-conditioning-interactive/model"
 	"strconv"
+	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -42,6 +43,15 @@ func RunUI() {
 	go func() {
 		for update := range uiUpdate {
 			update()
+		}
+	}()
+
+	go func() {
+		ticker := time.NewTicker(1 * time.Second)
+		for range ticker.C {
+			uiUpdate <- func() {
+				updateStatusString()
+			}
 		}
 	}()
 
