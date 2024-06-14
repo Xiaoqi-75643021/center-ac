@@ -5,6 +5,7 @@ import (
 	"center-air-conditioning-interactive/model"
 	"center-air-conditioning-interactive/service"
 	"errors"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -129,8 +130,7 @@ func buildMainScreen(w fyne.Window) fyne.CanvasObject {
 			if confirmed {
 				roomId := entry.Text
 				period := entryPeriod.Text
-				err := service.ExportRoomReport(roomId, period)
-				if err != nil {
+				if err := ExportRoomReportWithDialog(roomId, period, w); err != nil {
 					dialog.ShowError(err, w)
 				} else {
 					dialog.ShowInformation("Success", "Report exported successfully!", w)
@@ -178,4 +178,23 @@ func updateStatusString() {
 func updateRefreshRateString() {
 	refreshRateString := ac.GetRefreshRateString()
 	refreshRate.Set(refreshRateString)
+}
+
+func ExportRoomReportWithDialog(roomId string, period string, w fyne.Window) error {
+	dialog.ShowFolderOpen(func(uri fyne.ListableURI, err error) {
+		if err != nil || uri == nil {
+			dialog.ShowError(errors.New("未选择文件夹或选择失败"), w)
+			return
+		}
+
+		savePath := filepath.Join(uri.Path(), "RoomReportLog.log")
+		err = service.ExportRoomReport(roomId, period, savePath)
+		if err != nil {
+			dialog.ShowError(err, w)
+		} else {
+			dialog.ShowInformation("Success", "Report exported successfully!", w)
+		}
+	}, w)
+
+	return nil
 }

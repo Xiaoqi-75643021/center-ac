@@ -4,7 +4,7 @@ import (
 	"center-air-conditioning-interactive/model"
 	"errors"
 	"fmt"
-	"log"
+	"os"
 	"time"
 )
 
@@ -36,7 +36,7 @@ func QueryRoomLogByRoomId(roomId string, period string) (int, []*model.BlowReque
 	return switchTime, requests, totalCost, nil
 }
 
-func ExportRoomReport(roomId string, period string) error {
+func ExportRoomReport(roomId string, period string, savePath string) error {
 	rm := model.GetRoomManagerInstance()
 	
 	room, exists := rm.Rooms[roomId]
@@ -61,9 +61,12 @@ func ExportRoomReport(roomId string, period string) error {
 		return errors.New("无效的时间段")
 	}
 
-	// 记录到日志文件
+	// 记录到指定文件
 	logMessage := createLogMessage(roomId, switchTime, requests, totalCost, period)
-	log.Println(logMessage)
+	err := saveLogMessage(savePath, logMessage)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -75,4 +78,19 @@ func createLogMessage(roomId string, switchTime int, requests []*model.BlowReque
 		requestsInfo += request.String() + "; "
 	}
 	return time.Now().Format("2006-01-02 15:04:05") + " - RoomID: " + roomId + ", SwitchTime: " + string(rune(switchTime)) + ", Requests: [" + requestsInfo + "], TotalCost: " + fmt.Sprintf("%.2f", totalCost) + ", Period: " + period
+}
+
+func saveLogMessage(filePath string, message string) error {
+	f, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = f.WriteString(message + "\n")
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
