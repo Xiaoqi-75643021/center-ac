@@ -138,8 +138,6 @@ func buildMainScreen(w fyne.Window) fyne.CanvasObject {
 		}
 		if err := ExportRoomReportWithDialog(roomId, period, w); err != nil {
 			dialog.ShowError(err, w)
-		} else {
-			dialog.ShowInformation("Success", "Report exported successfully!", w)
 		}
 	})
 

@@ -31,6 +31,7 @@ func StartBlowing(roomId string, targetTemp float64, fanSpeed string) error {
 
 	room.RoomAC.TargetTemp = targetTemp
 	room.RoomAC.FanSpeed = constants.FanSpeedToInt[fanSpeed]
+	room.RoomAC.SwitchTime++
 
 	message := fmt.Sprintf("Blowing started | Target Temperature: %.1f°C | Fanspeed:%v", targetTemp, fanSpeed)
 	model.GetPrinterInstance().Print("blow", roomId, message)
