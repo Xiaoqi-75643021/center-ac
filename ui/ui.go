@@ -132,7 +132,7 @@ func buildMainScreen(w fyne.Window) fyne.CanvasObject {
 			dialog.ShowError(errors.New("Room ID and Period must be filled"), w)
 			return
 		}
-		if period == "daily" || period == "weekly" || period == "monthly" {
+		if !(period == "daily" || period == "weekly" || period == "monthly") {
 			dialog.ShowError(errors.New("Invalid period"), w)
 			return
 		}
