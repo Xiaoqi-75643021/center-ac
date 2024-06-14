@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"center-air-conditioning-interactive/handler"
-	"center-air-conditioning-interactive/model"
 	"center-air-conditioning-interactive/pkg/jwt"
 	"net/http"
 	"strings"
@@ -37,20 +36,6 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		c.Set("roomId", claims.RoomId)
 		
-		c.Next()
-	}
-}
-
-func MasterSwitchMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		ac := model.GetCentralACInstance()
-		if ac.IsTurnOff() {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "中央空调已关闭，不接收房间请求",
-			})
-			c.Abort()
-			return
-		}
 		c.Next()
 	}
 }

@@ -1,9 +1,9 @@
+// ui/ui.go
 package ui
 
 import (
 	"center-air-conditioning-interactive/constants"
 	"center-air-conditioning-interactive/model"
-	"fmt"
 	"strconv"
 
 	"fyne.io/fyne/v2"
@@ -12,7 +12,6 @@ import (
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/layout"
-	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -30,7 +29,7 @@ func RunUI() {
 
 	// 初始化Fyne应用和窗口
 	a := app.New()
-	w := a.NewWindow("中央空调")
+	w := a.NewWindow("Central Air Conditioner Controller")
 
 	// 初始化UI更新通道
 	uiUpdate = make(chan func())
@@ -54,17 +53,18 @@ func buildMainScreen(w fyne.Window) fyne.CanvasObject {
 	// 初始化绑定变量
 	mode = binding.NewString()
 	status = binding.NewString()
-	refreshRate = binding.BindString(&ac.RefreshRate)
+	refreshRate = binding.NewString()
 
 	updateModeString()
 	updateStatusString()
+	updateRefreshRateString()
 
 	modeLabel := widget.NewLabelWithData(mode)
 	statusLabel := widget.NewLabelWithData(status)
 	refreshRateLabel := widget.NewLabelWithData(refreshRate)
 
 	// 开关按钮
-	toggleButton := widget.NewButton("开关 On/Off", func() {
+	toggleButton := widget.NewButton("Toggle On/Off", func() {
 		if ac.IsTurnOff() {
 			ac.SetStatus(constants.CentralStatusStandBy)
 		} else {
@@ -76,7 +76,7 @@ func buildMainScreen(w fyne.Window) fyne.CanvasObject {
 	})
 
 	// 工作模式按钮
-	modeButton := widget.NewButton("模式 Mode (Cool/Heat)", func() {
+	modeButton := widget.NewButton("Toggle Mode (Cool/Heat)", func() {
 		if ac.Mode == constants.CoolMode {
 			ac.SetMode(constants.HeatMode)
 		} else {
@@ -89,13 +89,13 @@ func buildMainScreen(w fyne.Window) fyne.CanvasObject {
 
 	// 刷新频率按钮
 	refreshRateEntry := widget.NewEntry()
-	refreshRateEntry.SetPlaceHolder("请输入刷新频率(rate/s)")
+	refreshRateEntry.SetPlaceHolder("Enter Refresh Rate")
 	setRefreshRateButton := widget.NewButton("Set", func() {
 		rate, err := strconv.Atoi(refreshRateEntry.Text)
 		if err == nil {
-			ac.RefreshRate = rate
+			ac.SetRefreshRate(rate)
 			uiUpdate <- func() {
-				refreshRate.Set(strconv.Itoa(ac.RefreshRate))
+				updateRefreshRateString()
 			}
 		} else {
 			uiUpdate <- func() {
@@ -104,7 +104,7 @@ func buildMainScreen(w fyne.Window) fyne.CanvasObject {
 		}
 	})
 
-	refreshRateBox := container.NewHBox(widget.NewLabel("设置刷新频率: "), container.New(layout.NewGridWrapLayout(fyne.NewSize(200, refreshRateEntry.MinSize().Height)), refreshRateEntry), setRefreshRateButton)
+	refreshRateBox := container.NewHBox(widget.NewLabel("Set Refresh Rate: "), container.New(layout.NewGridWrapLayout(fyne.NewSize(200, refreshRateEntry.MinSize().Height)), refreshRateEntry), setRefreshRateButton)
 
 	// 静态数据部分
 	staticData := container.NewVBox(
@@ -132,11 +132,16 @@ func buildMainScreen(w fyne.Window) fyne.CanvasObject {
 }
 
 func updateModeString() {
-	modeString := constants.CentralACModeToString[ac.Mode]
+	modeString := ac.GetModeString()
 	mode.Set(modeString)
 }
 
 func updateStatusString() {
-	statusString := constants.CentralACStatusToString[ac.Status]
+	statusString := ac.GetStatusString()
 	status.Set(statusString)
+}
+
+func updateRefreshRateString() {
+	refreshRateString := ac.GetRefreshRateString()
+	refreshRate.Set(refreshRateString)
 }

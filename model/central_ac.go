@@ -2,6 +2,7 @@ package model
 
 import (
 	"center-air-conditioning-interactive/constants"
+	"strconv"
 	"sync"
 )
 
@@ -44,6 +45,22 @@ func (ac *CentralAC) SetStatus(status int) {
 	}
 }
 
+func (ac *CentralAC) SetRefreshRate(refreshRate int) {
+	ac.RefreshRate = refreshRate
+}
+
 func (ac *CentralAC) IsTurnOff() bool {
 	return ac.Status == constants.CentralStatusOff
+}
+
+func (ac *CentralAC) GetModeString() string {
+	return constants.CentralACModeToString[ac.Mode]
+}
+
+func (ac *CentralAC) GetStatusString() string {
+	return constants.CentralACStatusToString[ac.Status]
+}
+
+func (ac *CentralAC) GetRefreshRateString() string {
+	return strconv.Itoa(ac.RefreshRate)
 }
