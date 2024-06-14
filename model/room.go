@@ -21,7 +21,7 @@ type RoomManager struct {
 
 type RoomAC struct {
 	TargetTemp float64
-	FanSpeed   int // low/1, medium/2, or high/3
+	FanSpeed   int // Low/1, Medium/2, or High/3
 
 	Status int // on/1 or off/0
 

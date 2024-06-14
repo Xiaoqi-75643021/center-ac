@@ -74,5 +74,5 @@ func createLogMessage(roomId string, switchTime int, requests []*model.BlowReque
 	for _, request := range requests {
 		requestsInfo += request.String() + "; "
 	}
-	return time.Now().Format("2006-01-02 15:04:05") + " - RoomID: " + roomId + ", SwitchTime: " + string(switchTime) + ", Requests: [" + requestsInfo + "], TotalCost: " + fmt.Sprintf("%.2f", totalCost) + ", Period: " + period
+	return time.Now().Format("2006-01-02 15:04:05") + " - RoomID: " + roomId + ", SwitchTime: " + string(rune(switchTime)) + ", Requests: [" + requestsInfo + "], TotalCost: " + fmt.Sprintf("%.2f", totalCost) + ", Period: " + period
 }

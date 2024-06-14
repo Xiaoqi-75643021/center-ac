@@ -35,7 +35,7 @@ func QueryRefreshRate() (int, error) {
 	return refreshRate, nil
 }
 
-func UpdateRoomByRoomId(roomId string, temperature float64, status int) error {
+func UpdateRoomByRoomId(roomId string, temperature float64, status int, fanSpeed int) error {
 	rm := model.GetRoomManagerInstance()
 	room, exists := rm.Rooms[roomId];
 	if !exists {
@@ -43,6 +43,7 @@ func UpdateRoomByRoomId(roomId string, temperature float64, status int) error {
 	}
 	room.CurrentTemp = temperature
 	room.RoomAC.Status = status
+	room.RoomAC.FanSpeed = fanSpeed
 
 	message := fmt.Sprintf("Temperature:%.1f°C | Status:%v", temperature, constants.RoomStatusToString[status])
 	model.GetPrinterInstance().Print("statusReport", roomId, message)

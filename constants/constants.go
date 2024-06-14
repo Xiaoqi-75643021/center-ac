@@ -57,15 +57,15 @@ var RoomStatusToString = map[int]string{
 }
 
 var FanSpeedToString = map[int]string{
-	FanSpeedLow:    "low",
-	FanSpeedMedium: "medium",
-	FanSpeedHigh:   "high",
+	FanSpeedLow:    "Low",
+	FanSpeedMedium: "Medium",
+	FanSpeedHigh:   "High",
 }
 
 var FanSpeedToInt = map[string]int{
-	"low":    FanSpeedLow,
-	"medium": FanSpeedMedium,
-	"high":   FanSpeedHigh,
+	"Low":    FanSpeedLow,
+	"Medium": FanSpeedMedium,
+	"High":   FanSpeedHigh,
 }
 
 var RequestStatusToString = map[int]string{

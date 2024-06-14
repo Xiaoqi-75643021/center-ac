@@ -30,6 +30,7 @@ func UpdateRoomStatus(c *gin.Context) {
 	type request struct {
 		Temperature float64 `json:"temperature" binding:"required"`
 		Status      string  `json:"status" binding:"required"`
+		FanSpeed    string  `json:"fan_speed" binding:"required"`
 	}
 	var req request
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -37,17 +38,24 @@ func UpdateRoomStatus(c *gin.Context) {
 		return
 	}
 
-	var statusNum int
+	var statusNum, fanSpeedNum int
 	if req.Status == "Warm" {
 		statusNum = constants.RoomStatusWarm
 	} else if req.Status == "Cool" {
 		statusNum = constants.RoomStatusCool
 	} else {
-		Respond(c, http.StatusBadRequest, 1, "请求参数错误", nil)
+		Respond(c, http.StatusBadRequest, 1, "状态参数错误", nil)
 		return
 	}
 
-	if err := service.UpdateRoomByRoomId(roomId.(string), req.Temperature, statusNum); err != nil {
+	if !(req.FanSpeed == "High" || req.FanSpeed == "Medium" || req.FanSpeed == "Low") {
+		Respond(c, http.StatusBadRequest, 1, "风速参数错误", nil)
+		return
+	} else {
+		fanSpeedNum = constants.FanSpeedToInt[req.FanSpeed]
+	}
+
+	if err := service.UpdateRoomByRoomId(roomId.(string), req.Temperature, statusNum, fanSpeedNum); err != nil {
 		Respond(c, http.StatusInternalServerError, 1, "房间信息同步失败", gin.H{"error": err.Error()})
 		return
 	}
