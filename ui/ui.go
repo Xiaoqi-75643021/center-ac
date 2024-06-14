@@ -1,9 +1,10 @@
-// ui/ui.go
 package ui
 
 import (
 	"center-air-conditioning-interactive/constants"
 	"center-air-conditioning-interactive/model"
+	"center-air-conditioning-interactive/service"
+	"errors"
 	"strconv"
 	"time"
 
@@ -74,7 +75,7 @@ func buildMainScreen(w fyne.Window) fyne.CanvasObject {
 	refreshRateLabel := widget.NewLabelWithData(refreshRate)
 
 	// 开关按钮
-	toggleButton := widget.NewButton("Toggle Status(On/Off)", func() {
+	toggleButton := widget.NewButton("Toggle Status (On/Off)", func() {
 		if ac.IsTurnOff() {
 			ac.SetStatus(constants.CentralStatusStandBy)
 		} else {
@@ -86,7 +87,7 @@ func buildMainScreen(w fyne.Window) fyne.CanvasObject {
 	})
 
 	// 工作模式按钮
-	modeButton := widget.NewButton("Toggle Mode(Cool/Heat)", func() {
+	modeButton := widget.NewButton("Toggle Mode (Cool/Heat)", func() {
 		if ac.Mode == constants.CoolMode {
 			ac.SetMode(constants.HeatMode)
 		} else {
@@ -102,19 +103,41 @@ func buildMainScreen(w fyne.Window) fyne.CanvasObject {
 	refreshRateEntry.SetPlaceHolder("Enter Refresh Rate")
 	setRefreshRateButton := widget.NewButton("Set", func() {
 		rate, err := strconv.Atoi(refreshRateEntry.Text)
-		if err == nil {
+		if (err == nil) && (rate > 0) {
 			ac.SetRefreshRate(rate)
 			uiUpdate <- func() {
 				updateRefreshRateString()
 			}
 		} else {
 			uiUpdate <- func() {
-				dialog.ShowError(err, w)
+				dialog.ShowError(errors.New("Invalid refresh rate"), w)
 			}
 		}
 	})
 
 	refreshRateBox := container.NewHBox(widget.NewLabel("Set Refresh Rate: "), container.New(layout.NewGridWrapLayout(fyne.NewSize(200, refreshRateEntry.MinSize().Height)), refreshRateEntry), setRefreshRateButton)
+
+	// 导出报表按钮
+	exportReportButton := widget.NewButton("Export Report", func() {
+		entry := widget.NewEntry()
+		entry.SetPlaceHolder("Enter Room ID")
+		entryPeriod := widget.NewEntry()
+		entryPeriod.SetPlaceHolder("Enter Period (daily/weekly/monthly)")
+		
+		content := container.NewVBox(entry, entryPeriod)
+		dialog.ShowCustomConfirm("Export Report", "Export", "Cancel", content, func(confirmed bool) {
+			if confirmed {
+				roomId := entry.Text
+				period := entryPeriod.Text
+				err := service.ExportRoomReport(roomId, period)
+				if err != nil {
+					dialog.ShowError(err, w)
+				} else {
+					dialog.ShowInformation("Success", "Report exported successfully!", w)
+				}
+			}
+		}, w)
+	})
 
 	// 静态数据部分
 	staticData := container.NewVBox(
@@ -132,6 +155,7 @@ func buildMainScreen(w fyne.Window) fyne.CanvasObject {
 		toggleButton,
 		modeButton,
 		refreshRateBox,
+		exportReportButton,
 	)
 
 	return container.NewBorder(nil, nil, nil, nil,
