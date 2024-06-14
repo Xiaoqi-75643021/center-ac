@@ -52,16 +52,17 @@ func ExportRoomReport(roomId string, period string, savePath string) error {
 
 	switchTime = room.RoomAC.SwitchTime
 	requests = room.RoomAC.BlowRequests
-	switch period {
-	case "daily":
-		totalCost = room.RoomAC.CostTracker.GetDayTotal()
-	case "weekly":
-		totalCost = room.RoomAC.CostTracker.GetWeekTotal()
-	case "monthly":
-		totalCost = room.RoomAC.CostTracker.GetMonthTotal()
-	default:
-		return errors.New("无效的时间段")
-	}
+	// switch period {
+	// case "daily":
+	// 	totalCost = room.RoomAC.CostTracker.GetDayTotal()
+	// case "weekly":
+	// 	totalCost = room.RoomAC.CostTracker.GetWeekTotal()
+	// case "monthly":
+	// 	totalCost = room.RoomAC.CostTracker.GetMonthTotal()
+	// default:
+	// 	return errors.New("无效的时间段")
+	// }
+	_, totalCost = CalculateDailyEnergyAndCostByRoomId(roomId)
 
 	// 记录到指定文件
 	logMessage := createLogMessage(roomId, switchTime, requests, totalCost, period)
