@@ -84,3 +84,9 @@ func (rq *RequestQueue) QueryRequestByRoomId(roomId string) *BlowRequest {
 	}
 	return nil
 }
+
+func (rq *RequestQueue) IsEmpty() bool {
+	rq.mu.Lock()
+	defer rq.mu.Unlock()
+	return len(rq.queue) == 0
+}

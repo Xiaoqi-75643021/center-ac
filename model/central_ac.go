@@ -37,3 +37,13 @@ func (ac *CentralAC) SetMode(mode int) {
 		}
 	}
 }
+
+func (ac *CentralAC) SetStatus(status int) {
+	if status == constants.CentralStatusOff || status == constants.CentralStatusActive || status == constants.CentralStatusStandBy {
+		ac.Status = status
+	}
+}
+
+func (ac *CentralAC) IsTurnOff() bool {
+	return ac.Status == constants.CentralStatusOff
+}

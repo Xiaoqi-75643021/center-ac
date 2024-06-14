@@ -39,6 +39,18 @@ const (
 	CostPerEnergy = 5
 )
 
+var CentralACModeToString = map[int]string{
+	CoolMode: "Cool",
+	HeatMode: "Warm",
+}
+
+var CentralACStatusToString = map[int]string{
+	CentralStatusOff:     "Off",
+	CentralStatusStandBy: "StandBy",
+	CentralStatusActive:  "Active",
+}
+
+
 var RoomStatusToString = map[int]string{
 	RoomStatusWarm: "Warm",
 	RoomStatusCool: "Cool",
@@ -60,15 +72,4 @@ var RequestStatusToString = map[int]string{
 	RequestStatusPending: "Pending",
 	RequestStatusDoing:   "Doing",
 	RequestStatusDone:    "Done",
-}
-
-var CentralACModeToString = map[int]string{
-	CoolMode: "Cool",
-	HeatMode: "Warm",
-}
-
-var CentralACStatusToString = map[int]string{
-	CentralStatusOff:     "Off",
-	CentralStatusStandBy: "StandBy",
-	CentralStatusActive:  "Active",
 }

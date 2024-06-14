@@ -24,6 +24,9 @@ func StartBlowing(roomId string, targetTemp float64, fanSpeed string) error {
 		EnergyUsed: make([]float64, 3),
 	})
 
+	ac := model.GetCentralACInstance()
+	ac.SetStatus(constants.CentralStatusActive)
+
 	request := requestQueue.QueryRequestByRoomId(roomId)
 
 	room.RoomAC.TargetTemp = targetTemp
@@ -39,6 +42,10 @@ func StartBlowing(roomId string, targetTemp float64, fanSpeed string) error {
 func StopBlowing(roomId string) {
 	requestQueue := model.GetRequestQueue()
 	requestQueue.UpdateRequestStatusByRoomId(roomId)
+	if requestQueue.IsEmpty() {
+		ac := model.GetCentralACInstance()
+		ac.SetStatus(constants.CentralStatusStandBy)
+	}
 
 	model.GetPrinterInstance().Print("blow", roomId, "Blowing stopped")
 }

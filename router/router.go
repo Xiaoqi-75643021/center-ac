@@ -8,6 +8,8 @@ import (
 )
 
 func SetupRoutes(r *gin.Engine) {
+    r.Use(middleware.MasterSwitchMiddleware())
+    
     authGroup := r.Group("/auth")
     {
         authGroup.POST("/login", handler.Login)
