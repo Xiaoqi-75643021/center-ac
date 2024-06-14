@@ -44,7 +44,7 @@ func UpdateRoomByRoomId(roomId string, temperature float64, status int) error {
 	room.CurrentTemp = temperature
 	room.RoomAC.Status = status
 
-	message := fmt.Sprintf("Temperature:%v°C | Status:%v", temperature, constants.RoomStatusToString[status])
+	message := fmt.Sprintf("Temperature:%.1f°C | Status:%v", temperature, constants.RoomStatusToString[status])
 	model.GetPrinterInstance().Print("statusReport", roomId, message)
 
 	return nil
